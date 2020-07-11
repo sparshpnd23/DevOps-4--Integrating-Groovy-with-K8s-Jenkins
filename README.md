@@ -347,6 +347,7 @@ Now, you can go & check that your code will be deployed.
 TASK - 3: TESTING 
 
 This task will test the code & if the code is found corrupt, it will automatically send an email to the mentioned email of the developer.
+(Note - If your email is not working, I have explained the process in detail in my previous task, whose link is provided at the top. Please refer to it.)
 
 
         job("Testing") {
