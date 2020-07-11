@@ -302,5 +302,41 @@ This will download the code from the mentioned Github repo, check the extension 
                         pull(true)
                   }
             }
-             }
             }
+            }
+            
+            
+ TASK - 2: DEPLOYMENT
+ 
+ This Jenkins task will deploy the code using the suitable container & the Kubernetes deployment created above.
+ 
+         job("Deployment") {
+
+
+          triggers {
+            upstream {
+              upstreamProjects("Production")
+              threshold("SUCCESS")
+            }  
+          }
+
+
+          steps {
+            if(shell("ls /sparsh | grep html")) {
+
+
+              shell("if sudo kubectl get pv server-pv-vol; then if sudo kubectl get pvc server-pv-vol-claim; then echo "volume present"; else kubectl create -f server-pv-vol-claim.yml; fi; else sudo kubectl create -f server-pv-vol.yml; sudo kubectl create -f server-pv-vol-claim.yml; fi; if sudo kubectl get deployments server-deploy; then sudo kubectl rollout restart deployment/server-deploy; sudo kubectl rollout status deployment/server-deploy; else sudo kubectl create -f web-deploy-server.yml; sudo kubectl create -f webserver_expose.yml; sudo kubectl get all; fi")       
+
+
+          }
+
+
+            else {
+
+
+              shell("if sudo kubectl get pv phpserver-pv-vol; then if sudo kubectl get pvc phpserver-pv-vol-claim; then echo "volume present"; else kubectl create -f phpserver-pv-vol-claim.yml; fi; else sudo kubectl create -f phpserver-pv-vol.yml; sudo kubectl create -f phserverp-pv-vol-claim.yml; fi; if sudo kubectl get deployments phpserver-deploy; then sudo kubectl rollout restart deployment/phpserver-deploy; sudo kubectl rollout status deployment/phpserver-deploy; else sudo kubectl create -f web-deploy-phpserver.yml; sudo kubectl create -f webserver_expose.yml; sudo kubectl get all; fi")
+
+
+            }
+          }
+        }
