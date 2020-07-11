@@ -2,7 +2,9 @@
 
 Namaste Everyone !!
 In my earlier task, I had launched a server on Kubernetes using the Jenkins GUI. 
+
 Link to that project - https://github.com/sparshpnd23/DevOps-Task-3-Integrating-Jenkins-with-Kubernetes-.git
+
 In this project, the motive is to do the same but using the Groovy code & Kubernetes YML files. 
 
 #What is Groovy ?
@@ -250,4 +252,55 @@ We claim the storage from the PV by creating this PVC file using the following c
 
 **Now, it's time to move on to Groovy to create our Jnekins tasks**
 
-**Step -5:** 
+**Step -5:** Task -1 - PRODUCTION
+
+This will download the code from the mentioned Github repo, check the extension to identify whether the code is in html or php. Then, it will push the suitable image to docker hub so that it can be used later.
+
+
+            job("production") {
+            steps {
+            scm {
+                  github("sparshpnd23/face-recog-by-transfer-learning", "master")
+                }
+            triggers {
+                  scm("* * * * *")
+                }
+            shell("sudo cp -rvf * /sparsh")
+            if(shell("ls /sparsh/ | grep html")) {
+                  dockerBuilderPublisher {
+                        dockerFileDirectory("/sparsh/")
+                        cloud("docker")
+            tagsString("server:v1")
+                        pushOnSuccess(true)
+
+                        fromRegistry {
+                              url("sparshpnd23")
+                              credentialsId("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx")
+                        }
+                        pushCredentialsId("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx")
+                        cleanImages(false)
+                        cleanupWithJenkinsJobDelete(false)
+                        noCache(false)
+                        pull(true)
+                  }
+            }
+            else {
+                  dockerBuilderPublisher {
+                        dockerFileDirectory("/sparsh/")
+                        cloud("docker")
+            tagsString("phpserver:v1")
+                        pushOnSuccess(true)
+
+                        fromRegistry {
+                              url("sparshpnd23")
+                              credentialsId("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx")
+                        }
+                        pushCredentialsId("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx")
+                        cleanImages(false)
+                        cleanupWithJenkinsJobDelete(false)
+                        noCache(false)
+                        pull(true)
+                  }
+            }
+             }
+            }
