@@ -50,7 +50,7 @@ Run a container from your newly built image & expose it to any available port us
     Ex- docker run -it -p 2301:8080 --name jenpro jentest:v5
     
     
-**Now, before moving on to the building Jenkins tasks through Groovy code, we first need to setup some YMl files for our Server deployment on Kubernetes, which will be needed later.
+**Now, before moving on to the building Jenkins tasks through Groovy code, we first need to setup some YML files for our Server deployment on Kubernetes, which will be needed later.
 
 **Step -2:** Create a Dockerfile to launch the server. Now, when I had done this task using the Jenkins GUI earlier, I had checked the downloaded code & launched a suitable container. Here also, I'll consider 2 cases - If the downloaded code is in html, then the deployment will be created using the first image. If the code is in php, then the deployment will be created using the second image. You can also create a single image & install all the necessary programs in it, be it html, java, php or python, but here, to show that we can make a choice, I'll create two separate images for html & php.
 
@@ -340,3 +340,31 @@ This will download the code from the mentioned Github repo, check the extension 
             }
           }
         }
+
+Now, you can go & check that your code will be deployed.
+
+
+TASK - 3: TESTING 
+
+This task will test the code & if the code is found corrupt, it will automatically send an email to the mentioned email of the developer.
+
+
+        job("Testing") {
+
+        steps {
+
+            shell('export status=$(curl -siw "%{http_code}" -o /dev/null 192.168.99.102:2301); if [ $status -eq 200 ]; then exit 0; else python3 mail.py; exit 1; fi')
+          }
+        }
+        
+        
+        
+ **As far as the monitoring part is concerned, we need not worry as we have used Kubernetes Deploynment to launch the server. The Replica Set working behind the deployment will keep on monitoring the pods & will launch them again if they crash.**
+ 
+ 
+ **Our system is ready to use**
+ 
+ 
+ _Any suggestions are highly welcome._
+
+
